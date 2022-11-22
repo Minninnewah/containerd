@@ -31,6 +31,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/containerd/containerd/log"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 )
 
@@ -510,6 +511,8 @@ func (r *Runc) Checkpoint(context context.Context, id string, opts *CheckpointOp
 	for _, a := range actions {
 		args = a(args)
 	}
+	log.G(context).Infof("First log successful")
+	log.G(context).Infof("First arg: " + args[0])
 	return r.runOrError(r.command(context, append(args, id)...))
 }
 
