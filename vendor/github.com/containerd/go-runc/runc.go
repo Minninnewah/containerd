@@ -512,7 +512,6 @@ func (r *Runc) Checkpoint(context context.Context, id string, opts *CheckpointOp
 		args = a(args)
 	}
 
-	fmt.Print("Test blub")
 	log.G(context).Infof("First log successful")
 	log.G(context).Infof("First arg: " + args[0])
 	return r.runOrError(r.command(context, append(args, id)...))
