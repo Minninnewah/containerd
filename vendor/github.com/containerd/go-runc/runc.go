@@ -31,7 +31,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/containerd/containerd/log"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 )
 
@@ -504,6 +503,18 @@ func PreDump(args []string) []string {
 
 // Checkpoint allows you to checkpoint a container using criu
 func (r *Runc) Checkpoint(context context.Context, id string, opts *CheckpointOpts, actions ...CheckpointAction) error {
+
+	args1 := []string{"checkpoint"}
+	opts.ImagePath = opts.ImagePath + "/pre"
+	if opts != nil {
+		args1 = append(args1, opts.args()...)
+	}
+	for _, a := range actions {
+		args1 = a(args1)
+	}
+
+	r.runOrError(r.command(context, append(args1, id)...))
+
 	args := []string{"checkpoint"}
 	if opts != nil {
 		args = append(args, opts.args()...)
@@ -512,8 +523,9 @@ func (r *Runc) Checkpoint(context context.Context, id string, opts *CheckpointOp
 		args = a(args)
 	}
 
-	log.G(context).Infof("First log successful")
-	log.G(context).Infof("First arg: " + args[0])
+	//log.G(context).Infof("First log successful")
+	//log.G(context).Infof("First arg: " + args[0])
+
 	return r.runOrError(r.command(context, append(args, id)...))
 }
 
